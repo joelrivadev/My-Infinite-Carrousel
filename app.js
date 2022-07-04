@@ -1,11 +1,41 @@
 
-  
-const d=document,
+window.addEventListener('DOMContentLoaded',(e)=>{ 
+
+const d=document, n=navigator, ua=n.userAgent,
+
       $slidesContainer = d.querySelector('.slides-cntr'),
       $slide = d.querySelectorAll('.slide')
 
+////////////////////////////////////////////////////////////////////////////
 
-// TÁCTIL CARDS Swipe Left / Right
+// USER DEVICE
+const userDeviceInfo = ()=>{
+  isMobile = {
+      android:()=>ua.match(/android/i),
+          ios:()=>ua.match(/iphone|ipad|ipod/i)
+  },
+  isBrowser = {
+      chrome:()=>ua.match(/chrome/i),
+      safarai:()=>ua.match(/safarai/i),
+      firefox:()=>ua.match(/firefox/i),
+      opera:()=>ua.match(/opera|opera mini/i),
+      ie:()=>ua.match(/msie|iemobile/i),
+      edge:()=>ua.match(/edge/i),
+      any:function(){
+        return(
+          this.ie()||
+          this.edge()||
+          this.chrome()||
+          this.safarai()||
+          this.firefox()||
+          this.opera()
+        );
+      }
+  };
+}  
+userDeviceInfo()
+
+// TOUCH Swipe Left / Right
 let initialX = null;
 const startTouch = (e)=> initialX = e.touches[0].clientX;  
 const moveTouch = (e)=>{
@@ -25,13 +55,14 @@ const moveTouch = (e)=>{
   initialX = null;
 };      
 
-// PARA TODOS LOS BTN ******
+// BTN ANIMATION ******
 const btnOn = (btn)=>{
   btn.classList.add('btn-on');
   setTimeout(() => {
     btn.classList.remove('btn-on');
   }, 200)
 }
+
 // CAROUSEL ******
 let i_L=$slide.length-1, i_C=0, i_R=1;
 $slide[i_C].style.opacity = '1';  
@@ -75,7 +106,6 @@ const btnLeft = ()=>{
   i_L++;
   //----------------------------------------------    
 }; 
-//--------------------------------------------------------------------------
 
 const btnRight = ()=>{   
   $slide.forEach(slid=>{
@@ -111,21 +141,41 @@ const btnRight = ()=>{
   };   
   i_R--;
   //----------------------------------------------    
-};    
+};  
 
-// LLAMADORES       
-d.addEventListener('click', (e)=>{
-  if(e.target.matches('.btn-crsl-l *')){
-    btnLeft();
-    btnOn(d.querySelector('.btn-crsl-l'));
-  };
-  if(e.target.matches('.btn-crsl-r *')){
-    btnRight();
-    btnOn(d.querySelector('.btn-crsl-r'));
-  };
-});
+//////////////////////////////////////////////////////////////////////////
 
-// touch del carousel
+if(isMobile.android() || isBrowser.any()){
+  d.addEventListener('click', (e)=>{
+    if(e.target.matches('.btn-crsl-l *')){
+      btnLeft();
+      btnOn(d.querySelector('.btn-crsl-l'));
+    };
+    if(e.target.matches('.btn-crsl-r *')){
+      btnRight();
+      btnOn(d.querySelector('.btn-crsl-r'));
+    };
+  });
+};
+//---------------------------------------------- 
+if(isMobile.ios()){
+  d.addEventListener('touchstart', (e)=>{
+    if(e.target.matches('.btn-crsl-l *')){
+      btnLeft();
+      btnOn(d.querySelector('.btn-crsl-l'));
+    };
+    if(e.target.matches('.btn-crsl-r *')){
+      btnRight();
+      btnOn(d.querySelector('.btn-crsl-r'));
+    };
+  }, false);
+};
+
+// touch
 $slidesContainer.addEventListener("touchstart", startTouch, false); 
 $slidesContainer.addEventListener("touchmove", moveTouch, false);  
 
+//////////////////////////////////////////////////////////////////////////
+
+  e.preventDefault();        
+});
